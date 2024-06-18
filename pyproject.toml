@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "safely-biz-test"
+version = "0.1.0"
+description = ""
+authors = ["jiyong.yoon <jyyoon0615@naver.com>"]
+readme = "README.md"
+packages = [{include = "safely_biz_test"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+langchain = "^0.2.5"
+langchain-community = "^0.2.5"
+langchain-core = "^0.2.8"
+langchain-experimental = "^0.0.61"
+langchain-google-genai = "^1.0.6"
+langchain-text-splitters = "^0.2.1"
+langserve = "^0.2.2"
+langsmith = "^0.1.79"
+chromadb = "^0.5.2"
+huggingface-hub = "^0.23.4"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
