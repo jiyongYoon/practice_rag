@@ -18,6 +18,10 @@ langserve = "^0.2.2"
 langsmith = "^0.1.79"
 chromadb = "^0.5.2"
 huggingface-hub = "^0.23.4"
+pypdf = "^4.2.0"
+tiktoken = "^0.7.0"
+sentence-transformers = "^3.0.1"
+langchain-huggingface = "^0.0.3"
 
 
 [build-system]
