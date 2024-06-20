@@ -1,10 +1,10 @@
 from load_data import pdf_loader
 from splitter import text_splitter
-from model import embedding_model
+from model import embedding_model, openai_embeddings_model
 from vector_store import chroma_db
 
 pdf_name = 'dios.pdf'
-collection_name = 'dios'
+collection_name = 'dios-openai'
 
 def print_split(text: str):
     print('-'*10 + text + '-'*10)
@@ -53,7 +53,8 @@ print_split('(Optional) embeddings start')
 print_split('vector 저장소에 저장할때는 저장 시 embedding을 시켜서 저장하는 것이 한 process')
 
 
-embeddings_model = embedding_model.generate_huggingface_embedding_model()
+# embeddings_model = embedding_model.generate_huggingface_embedding_model(cuda_on=True)
+embeddings_model = openai_embeddings_model.generate_embedding_model()
 
 # embeddings = embeddings_model.embed_documents(split_documents)
 # 위 메서드에서 Document 객체는 임베딩이 안됨. 'Document' object has no attribute 'replace'

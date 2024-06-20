@@ -22,7 +22,18 @@ pypdf = "^4.2.0"
 tiktoken = "^0.7.0"
 sentence-transformers = "^3.0.1"
 langchain-huggingface = "^0.0.3"
+#torch = { version = "*", source = "pytorch" }
+#torchvision = { version = "*", source = "pytorch" }
+#torchaudio = { version = "*", source = "pytorch" }
 
+#[[tool.poetry.source]]
+#name = "pytorch"
+#url = "https://download.pytorch.org/whl/cu121"
+#priority = "secondary"
+torch = "^2.3.1"
+torchvision = "^0.18.1"
+torchaudio = "^2.3.1"
+langchain-openai = "^0.1.8"
 
 [build-system]
 requires = ["poetry-core"]
