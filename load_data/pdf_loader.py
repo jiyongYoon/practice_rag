@@ -12,6 +12,3 @@ def load_pdf(pdf_filename: str):
     loader = PyPDFLoader(pdf_filepath)
     pages = loader.load_and_split()
     return pages
-
-
-load_pdf('ai.pdf')

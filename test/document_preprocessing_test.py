@@ -3,8 +3,18 @@ from splitter import text_splitter
 from model import embedding_model, openai_embeddings_model
 from vector_store import chroma_db
 
-pdf_name = 'dios.pdf'
-collection_name = 'dios-openai'
+### 테스트 환경별 변수값 세팅
+pdf_name = 'bad2.pdf'
+# collection_name = 'dios'
+# collection_name = 'dios-openai'
+collection_name = 'safely_4-1-bad2'
+
+# embedding_model_name = 'jhgan/ko-sbert-nli'
+# embedding_model_name = 'jhgan/ko-sroberta-multitask'
+# embedding_model_name = 'sentence-transformers/stsb-xlm-r-multilingual'
+
+# embeddings_model = embedding_model.generate_huggingface_embedding_model(embedding_model_name, cuda_on=True)
+embeddings_model = openai_embeddings_model.generate_embedding_model()
 
 def print_split(text: str):
     print('-'*10 + text + '-'*10)
@@ -52,9 +62,6 @@ for num in range(len(split_text)):
 print_split('(Optional) embeddings start')
 print_split('vector 저장소에 저장할때는 저장 시 embedding을 시켜서 저장하는 것이 한 process')
 
-
-# embeddings_model = embedding_model.generate_huggingface_embedding_model(cuda_on=True)
-embeddings_model = openai_embeddings_model.generate_embedding_model()
 
 # embeddings = embeddings_model.embed_documents(split_documents)
 # 위 메서드에서 Document 객체는 임베딩이 안됨. 'Document' object has no attribute 'replace'
