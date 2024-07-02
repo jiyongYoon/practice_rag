@@ -8,6 +8,7 @@ def generate_embedding_model():
 
     embeddings_model = OpenAIEmbeddings(
         api_key=os.environ['OPEN_API_KEY'],
+        show_progress_bar=True,
     )
 
     return embeddings_model

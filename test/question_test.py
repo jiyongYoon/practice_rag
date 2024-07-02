@@ -9,10 +9,11 @@ def print_split(text: str):
 
 print_split('setting variables')
 
-pdf_name = 'dios.pdf'
+pdf_name = 'docs.pdf'
 # collection_name = 'dios'
 # collection_name = 'dios-openai'
-collection_name = 'safely_4-1'
+# collection_name = 'safely_4-1'
+collection_name = 'safety_docs'
 
 # embedding_model_name = 'jhgan/ko-sbert-nli'
 # embedding_model_name = 'jhgan/ko-sroberta-multitask'
@@ -20,7 +21,18 @@ collection_name = 'safely_4-1'
 
 # question = '식기세척기 내부에 얼룩이 생겼는데 왜그런거야?'
 # question = '린스 주입 방법을 알려줘'
-question = '이 문서는 어떤 회사의 문서야?'
+# question = '이 문서는 어떤 회사의 문서야?'
+question = """
+근로자 A 내용
+- 전 현장 배치전 수검일 2023년 12월 15일(소음,분진,자외선)
+- 우리 현장 신규 출역일 2024년 4월 19일
+- 6개월 지나지 않아서 배치전 갈음.
+- 2개월 후 재출역 2024년 06월 29일
+
+그럼 6개월이 지났고
+다시 배치전 검진을 받아야하나요?
+아님 특수검진을 받아야하나요?
+"""
 
 print_split('generate embeddings_model')
 
@@ -30,7 +42,7 @@ embeddings_model = openai_embeddings_model.generate_embedding_model()
 print_split('generate llm')
 
 # remote_llm = remote_llm_model.generate_remote_llm()
-llm = ollama_llm_model.llm
+llm = ollama_llm_model.eeve_llm
 # llm = openai_chatgpt_llm.generate_llm()
 # llm = ollama_llm_model.llama
 
@@ -52,7 +64,8 @@ all_documents = chroma_db.get_all_documents(find_db, collection_name=collection_
 print_split('generate prompt')
 
 
-prompt_template = senario_prompt.generate_safety_goal_text()
+# prompt_template = senario_prompt.generate_safety_goal_text()
+prompt_template = senario_prompt.generate_safely_docs_prompt_template()
 # prompt = prompt_template.format(
 #     question="우리나라와 미국, 중국, EU의 인공지능 산업 육성 정책의 특징을 정리해줘"
 # )
@@ -76,7 +89,7 @@ retriever = find_db.as_retriever(
     search_type="similarity_score_threshold",
     search_kwargs={
         'score_threshold': 0.5,
-        'k': 2,
+        'k': 5,
     }
 )
 
@@ -87,8 +100,8 @@ qa = RetrievalQA.from_chain_type(
     return_source_documents=True,
 )
 
-# result = qa.invoke({"query": question})
-result = qa.invoke({"query": prompt_template})
+result = qa.invoke({"query": question})
+# result = qa.invoke({"query": prompt_template})
 print(result)
 
 import json

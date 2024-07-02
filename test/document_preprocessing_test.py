@@ -4,10 +4,12 @@ from model import embedding_model, openai_embeddings_model
 from vector_store import chroma_db
 
 ### 테스트 환경별 변수값 세팅
-pdf_name = 'bad2.pdf'
+# pdf_name = 'docs.pdf'
+pdf_name = 'docs_safety_qna.pdf'
 # collection_name = 'dios'
 # collection_name = 'dios-openai'
-collection_name = 'safely_4-1-bad2'
+# collection_name = 'safely_4-1-bad2-small'
+collection_name = 'safety_docs'
 
 # embedding_model_name = 'jhgan/ko-sbert-nli'
 # embedding_model_name = 'jhgan/ko-sroberta-multitask'
@@ -46,7 +48,7 @@ print_split('text_split_start')
   }
 }
 """
-splitter = text_splitter.generate_text_splitter(500, 100)
+splitter = text_splitter.generate_text_splitter(3000, 300)
 split_documents = splitter.split_documents(pdf)
 print_split('split_documents')
 for num in range(len(split_documents)):
@@ -78,11 +80,22 @@ print_split('vector 저장소에 저장할때는 저장 시 embedding을 시켜�
 
 print_split('store vectors start')
 
-save_db = chroma_db.save_document(
+# save_db = chroma_db.save_document(
+#     embedding_model=embeddings_model,
+#     document=split_documents,
+#     collection_name=collection_name,
+# )
+
+# print(f"저장된 벡터 데이터의 collection_name: {save_db._collection.name}")
+# print(f"저장된 벡터 데이터의 갯수: {len(save_db)}")
+
+chroma_db.save_document_by_batch_size(
     embedding_model=embeddings_model,
     document=split_documents,
     collection_name=collection_name,
 )
 
-print(f"저장된 벡터 데이터의 collection_name: {save_db._collection.name}")
-print(f"저장된 벡터 데이터의 갯수: {len(save_db)}")
+find_db = chroma_db.find_db(embedding_model=embeddings_model, collection_name=collection_name, )
+
+print(f"저장된 벡터 데이터의 collection_name: {find_db._collection.name}")
+print(f"저장된 벡터 데이터의 갯수: {len(find_db)}")

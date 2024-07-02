@@ -20,6 +20,25 @@ def generate_prompt_template():
     return prompt
 
 
+def generate_safely_docs_prompt_template():
+    template = """
+너가 제공받은 문서는 중대재해처벌법 해설서 문서야. 질문에 대한 모든 답변은 이 안에서만 이루어져야 해.
+창의적인 답은 절대로 하지 말고 자료에 있는 내용에서만 답변하고 없는 내용은 절대로 지어내지 않고 모른다고 답해.
+한글로 답변해줘.
+
+질문 내용은 아래와 같아.
+
+{question}
+    """
+
+    prompt = PromptTemplate(
+        template=template,
+        input_variables=["question"],
+    )
+
+    return prompt
+
+
 def generate_safety_goal_text():
     template = """
 너는 전달받은 문서에서 아래와 같은 항목의 내용이 있는지 찾아주는 역할을 해야해.
