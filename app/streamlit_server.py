@@ -17,9 +17,9 @@ from langchain_core.callbacks.streaming_stdout import StreamingStdOutCallbackHan
 from typing import List
 from langchain_core.documents import Document
 
-from model import ollama_llm_model
+from model import ollama_llm_model, openai_embeddings_model
+from splitter import text_splitter
 from app.rag_chat import retriever
-
 
 # ⭐️ Embedding 설정
 # USE_BGE_EMBEDDING = True 로 설정시 HuggingFace BAAI/bge-m3 임베딩 사용 (2.7GB 다운로드 시간 걸릴 수 있습니다)
@@ -110,55 +110,36 @@ def format_docs_with_name_and_page(docs: List[Document]) -> str:
     return "\n".join(formatted_texts)
 
 
-# @st.cache_resource(show_spinner="Embedding file...")
-# def embed_file(file):
-#     file_content = file.read()
-#     file_path = f"./.cache/files/{file.name}"
-#     with open(file_path, "wb") as f:
-#         f.write(file_content)
-#
-#     cache_dir = LocalFileStore(f"./.cache/embeddings/{file.name}")
-#
-#     text_splitter = RecursiveCharacterTextSplitter(
-#         chunk_size=500,
-#         chunk_overlap=50,
-#         separators=["\n\n", "\n", "(?<=\. )", " ", ""],
-#         length_function=len,
-#     )
-#     loader = UnstructuredFileLoader(file_path)
-#     docs = loader.load_and_split(text_splitter=text_splitter)
-#
-#     if USE_BGE_EMBEDDING:
-#         # BGE Embedding: @Mineru
-#         model_name = "BAAI/bge-m3"
-#         # GPU Device 설정:
-#         # - NVidia GPU: "cuda"
-#         # - Mac M1, M2, M3: "mps"
-#         # - CPU: "cpu"
-#         model_kwargs = {
-#             # "device": "cuda"
-#             "device": "mps"
-#             # "device": "cpu"
-#         }
-#         encode_kwargs = {"normalize_embeddings": True}
-#         embeddings = HuggingFaceEmbeddings(
-#             model_name=model_name,
-#             model_kwargs=model_kwargs,
-#             encode_kwargs=encode_kwargs,
-#         )
-#     else:
-#         embeddings = OpenAIEmbeddings()
-#     cached_embeddings = CacheBackedEmbeddings.from_bytes_store(embeddings, cache_dir)
-#     vectorstore = FAISS.from_documents(docs, embedding=cached_embeddings)
-#     retriever = vectorstore.as_retriever()
-#     return retriever
+@st.cache_resource(show_spinner="Embedding file...")
+def embed_file(file):
+    file_content = file.read()
+    file_path = f"./safety_docs/pdf/{file.name}"
+    with open(file_path, "wb") as f:
+        f.write(file_content)
+
+    cache_dir = LocalFileStore(f"./.cache/embeddings/{file.name}")
+
+    # text_splitter = RecursiveCharacterTextSplitter(
+    #     chunk_size=500,
+    #     chunk_overlap=50,
+    #     separators=["\n\n", "\n", "(?<=\. )", " ", ""],
+    #     length_function=len,
+    # )
+    splitter = text_splitter.generate_text_splitter(2000, 200)
+    loader = UnstructuredFileLoader(file_path)
+    docs = loader.load_and_split(text_splitter=splitter)
+    embeddings = openai_embeddings_model.generate_embedding_model()
+    cached_embeddings = CacheBackedEmbeddings.from_bytes_store(embeddings, cache_dir)
+    vectorstore = FAISS.from_documents(docs, embedding=cached_embeddings)
+    retriever = vectorstore.as_retriever()
+    return retriever
 
 
-# with st.sidebar:
-#     file = st.file_uploader(
-#         "파일 업로드",
-#         type=["pdf", "txt", "docx"],
-#     )
+with st.sidebar:
+    file = st.file_uploader(
+        "파일 업로드",
+        type=["pdf", "txt", "docx"],
+    )
 
 # if file:
 #     # retriever = embed_file(file)

@@ -5,7 +5,6 @@ from typing import List, Union
 from langserve.pydantic_v1 import BaseModel, Field
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
 from langserve import add_routes
-from app.rag_chat import rag_chain
 # from app.chain import chain
 from app.chat import chain as chat_chain
 from dotenv import load_dotenv
@@ -45,8 +44,7 @@ class InputChat(BaseModel):
 
 add_routes(
     app,
-    # chat_chain.with_types(input_type=InputChat),
-    rag_chain.with_types(input_type=InputChat),
+    chat_chain.with_types(input_type=InputChat),
     path="/chat",
     enable_feedback_endpoint=True,
     enable_public_trace_link_endpoint=True,
